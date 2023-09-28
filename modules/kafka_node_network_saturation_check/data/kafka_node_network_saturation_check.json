@@ -7,6 +7,14 @@
       "value": ""
     },
     {
+      "name": "NETWORK_INTERFACE",
+      "value": ""
+    },
+    {
+      "name": "ERROR_KEYWORD",
+      "value": ""
+    },
+    {
       "name": "INTERFACE_NAME",
       "value": ""
     },
@@ -15,15 +23,7 @@
       "value": ""
     },
     {
-      "name": "ERROR_KEYWORD",
-      "value": ""
-    },
-    {
       "name": "KAFKA_NODE_IP",
-      "value": ""
-    },
-    {
-      "name": "NETWORK_INTERFACE",
       "value": ""
     },
     {
