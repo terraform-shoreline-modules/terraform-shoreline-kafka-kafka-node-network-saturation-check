@@ -1,0 +1,122 @@
+{
+  "name": "kafka_node_network_saturation_check",
+  "description": "This incident type refers to situations where the network of a Kafka node becomes saturated or overloaded. This can happen due to an increase in traffic or messages being sent to the node, causing the node to slow down or even crash. It is important to monitor and address network saturation issues to ensure the proper functioning of the Kafka cluster and prevent downtime or data loss.",
+  "params": [
+    {
+      "name": "NEW_BANDWIDTH_LIMIT",
+      "value": ""
+    },
+    {
+      "name": "INTERFACE_NAME",
+      "value": ""
+    },
+    {
+      "name": "KAFKA_NODE_PID",
+      "value": ""
+    },
+    {
+      "name": "ERROR_KEYWORD",
+      "value": ""
+    },
+    {
+      "name": "KAFKA_NODE_IP",
+      "value": ""
+    },
+    {
+      "name": "NETWORK_INTERFACE",
+      "value": ""
+    },
+    {
+      "name": "HOST_NAME",
+      "value": ""
+    },
+    {
+      "name": "K8S_CLUSTER_NAME",
+      "value": ""
+    },
+    {
+      "name": "NAMESPACE",
+      "value": ""
+    }
+  ],
+  "cells": [
+    {
+      "name": "cell_1",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Kafka node network saturation check.\nThis incident type refers to situations where the network of a Kafka node becomes saturated or overloaded. This can happen due to an increase in traffic or messages being sent to the node, causing the node to slow down or even crash. It is important to monitor and address network saturation issues to ensure the proper functioning of the Kafka cluster and prevent downtime or data loss."
+    },
+    {
+      "name": "cell_2",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the network status of the Kafka node"
+    },
+    {
+      "name": "cell_3",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `sudo netstat -anp | grep ${KAFKA_NODE_IP}`"
+    },
+    {
+      "name": "cell_4",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the CPU and memory usage of the Kafka node"
+    },
+    {
+      "name": "cell_5",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `sudo top -p ${KAFKA_NODE_PID}`"
+    },
+    {
+      "name": "cell_6",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the network traffic of the Kafka node"
+    },
+    {
+      "name": "cell_7",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `sudo tcpdump -i ${NETWORK_INTERFACE}`"
+    },
+    {
+      "name": "cell_8",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the Kafka logs for any errors or warnings related to network saturation"
+    },
+    {
+      "name": "cell_9",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `sudo tail -f /var/log/kafka/kafka.log | grep ${ERROR_KEYWORD}`"
+    },
+    {
+      "name": "cell_10",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the network bandwidth of the Kafka node"
+    },
+    {
+      "name": "cell_11",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `sudo iftop -n -P -i ${NETWORK_INTERFACE}`"
+    },
+    {
+      "name": "cell_12",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Increase the network bandwidth of the affected Kafka node to handle the increased traffic."
+    },
+    {
+      "name": "cell_13",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_set_bandwidth_limit($NEW_BANDWIDTH_LIMIT, $INTERFACE_NAME)"
+    }
+  ]
+}
