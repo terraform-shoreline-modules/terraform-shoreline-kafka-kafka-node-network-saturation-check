@@ -1,0 +1,154 @@
+{
+  "name": "network_saturation_check_for_kafka_nodes",
+  "description": "This incident type refers to an issue where the network bandwidth on one or more Kafka nodes becomes fully saturated, causing the node(s) to experience performance degradation or even failure. This can result in message delivery delays or loss, and can also impact other nodes that rely on the affected node(s) for message replication. The saturation can be caused by a variety of factors, such as increased message traffic, misconfiguration, or hardware issues.",
+  "params": [
+    {
+      "name": "NUM_CONNECTIONS",
+      "value": ""
+    },
+    {
+      "name": "NODE_IP_ADDRESS",
+      "value": ""
+    },
+    {
+      "name": "BACKLOG_SIZE",
+      "value": ""
+    },
+    {
+      "name": "FIN_TIMEOUT",
+      "value": ""
+    },
+    {
+      "name": "SYN_BACKLOG_SIZE",
+      "value": ""
+    },
+    {
+      "name": "HOST_NAME",
+      "value": ""
+    },
+    {
+      "name": "K8S_CLUSTER_NAME",
+      "value": ""
+    },
+    {
+      "name": "NAMESPACE",
+      "value": ""
+    }
+  ],
+  "cells": [
+    {
+      "name": "cell_1",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Network Saturation Check for Kafka Nodes\nThis incident type refers to an issue where the network bandwidth on one or more Kafka nodes becomes fully saturated, causing the node(s) to experience performance degradation or even failure. This can result in message delivery delays or loss, and can also impact other nodes that rely on the affected node(s) for message replication. The saturation can be caused by a variety of factors, such as increased message traffic, misconfiguration, or hardware issues."
+    },
+    {
+      "name": "cell_2",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check network interface statistics"
+    },
+    {
+      "name": "cell_3",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `ifconfig -a`"
+    },
+    {
+      "name": "cell_4",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check network connections"
+    },
+    {
+      "name": "cell_5",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `netstat -an`"
+    },
+    {
+      "name": "cell_6",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check network bandwidth usage for each process"
+    },
+    {
+      "name": "cell_7",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `iftop`"
+    },
+    {
+      "name": "cell_8",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check network latency between nodes"
+    },
+    {
+      "name": "cell_9",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `ping ${NODE_IP_ADDRESS}`"
+    },
+    {
+      "name": "cell_10",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check network throughput between nodes"
+    },
+    {
+      "name": "cell_11",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `iperf -c ${NODE_IP_ADDRESS}`"
+    },
+    {
+      "name": "cell_12",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check Kafka node status"
+    },
+    {
+      "name": "cell_13",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `systemctl status kafka`"
+    },
+    {
+      "name": "cell_14",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check Kafka logs"
+    },
+    {
+      "name": "cell_15",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `journalctl -u kafka`"
+    },
+    {
+      "name": "cell_16",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check Kafka node configuration"
+    },
+    {
+      "name": "cell_17",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `cat /etc/kafka/server.properties`"
+    },
+    {
+      "name": "cell_18",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Optimize network configuration: This could involve tuning network settings on the nodes to better handle the traffic or changing the network topology to reduce congestion."
+    },
+    {
+      "name": "cell_19",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_optimize_network($NUM_CONNECTIONS, $BACKLOG_SIZE, $FIN_TIMEOUT, $SYN_BACKLOG_SIZE)"
+    }
+  ]
+}

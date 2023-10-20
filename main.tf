@@ -14,8 +14,8 @@ provider "shoreline" {
   debug = true
 }
 
-module "kafka_node_network_saturation_check" {
-  source    = "./modules/kafka_node_network_saturation_check"
+module "network_saturation_check_for_kafka_nodes" {
+  source    = "./modules/network_saturation_check_for_kafka_nodes"
 
   providers = {
     shoreline = shoreline
